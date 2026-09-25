@@ -13,7 +13,7 @@
     /* ----- reset & base ----- */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      background: #03001e; /* Deep indigo gradient basis */
+      background: #03001e;
       background-image: 
         radial-gradient(at 0% 0%, rgba(123, 94, 255, 0.12) 0, transparent 50%),
         radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.12) 0, transparent 50%),
@@ -260,22 +260,22 @@
       justify-content: center;
     }
     .profile-circle {
-    width: 280px;
-    height: 280px;
-    border-radius: 50%;
-    background-image: url("profile.png");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    backdrop-filter: blur(20px);
-    border: 2px solid rgba(123, 94, 255, 0.3);
-    box-shadow: 0 0 80px #7b5eff44, inset 0 0 80px #7b5eff22;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: 0.4s;
-    animation: floatGlow 6s ease-in-out infinite;
-}
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      background-image: url("profile.png");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      backdrop-filter: blur(20px);
+      border: 2px solid rgba(123, 94, 255, 0.3);
+      box-shadow: 0 0 80px #7b5eff44, inset 0 0 80px #7b5eff22;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: 0.4s;
+      animation: floatGlow 6s ease-in-out infinite;
+    }
     @keyframes floatGlow {
       0% { transform: translateY(0) scale(1); box-shadow: 0 0 60px #7b5eff44; }
       50% { transform: translateY(-16px) scale(1.02); box-shadow: 0 0 100px #7b5eff88; }
@@ -419,7 +419,7 @@
     /* projects */
     .project-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: 32px;
     }
     .project-card {
@@ -455,8 +455,40 @@
       border: 1px solid rgba(255, 255, 255, 0.05);
     }
     .project-card h3 { font-size: 1.6rem; }
+    .project-card .tech-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 10px 0;
+    }
+    .project-card .tech-tags span {
+      font-size: 0.75rem;
+      background: rgba(123, 94, 255, 0.15);
+      border: 1px solid rgba(123, 94, 255, 0.3);
+      padding: 4px 12px;
+      border-radius: 40px;
+      color: #c5b8ff;
+    }
     .project-card p { color: #b0baff; font-weight: 300; margin: 12px 0 20px; }
     .project-card .btn-group { display: flex; gap: 14px; flex-wrap: wrap; }
+
+    /* certificate */
+    .cert-card {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 32px 36px;
+      background: rgba(255,255,255,0.02);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 28px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .cert-card i { font-size: 2.6rem; color: #06b6d4; }
+    .cert-card h3 { font-size: 1.3rem; font-weight: 600; }
+    .cert-card p { color: #b0baff; font-weight: 300; font-size: 0.95rem; }
+    .cert-card .btn { margin-top: 10px; padding: 8px 22px; font-size: 0.85rem; }
 
     /* experience (learning) */
     .learning-grid {
@@ -558,6 +590,7 @@
       .profile-circle { width: 220px; height: 220px; }
       nav { padding: 10px 22px; gap: 20px; flex-wrap: wrap; justify-content: center; }
       .contact-grid { grid-template-columns: 1fr; }
+      .cert-card { flex-direction: column; text-align: center; }
     }
     @media (max-width: 600px) {
       .container { padding: 0 16px; }
@@ -596,6 +629,7 @@
     <a href="#education">Education</a>
     <a href="#skills">Skills</a>
     <a href="#projects">Projects</a>
+    <a href="#certificate">Certificate</a>
     <a href="#contact">Contact</a>
   </nav>
 
@@ -609,16 +643,16 @@
       </div>
       <div class="hero-content">
         <div class="hero-text">
-          <span class="badge"><i class="fas fa-chart-line"></i> BCA Graduate | Data Analyst</span>
+          <span class="badge"><i class="fas fa-graduation-cap"></i> BCA Graduate · Aspiring IT Professional</span>
           <h1>JOHNY JOHN</h1>
-          <div class="sub">BCA Graduate & Data Analyst</div>
+          <div class="sub">BCA Graduate & Python / Django Developer</div>
           <div class="typing-wrapper">
             <span>▸</span>
-            <span id="typed-text">Data Analyst</span>
+            <span id="typed-text">Python Developer</span>
           </div>
           <div class="hero-btns">
-            <a href="./Johny_John_Resume.pdf" target="_blank" class="btn btn-primary">
-    <i class="fas fa-download"></i> Download Resume
+            <a href="./johnyjohn_resume.pdf" target="_blank" class="btn btn-primary">
+              <i class="fas fa-download"></i> Download Resume
             </a>
             <a href="#projects" class="btn btn-outline"><i class="fas fa-rocket"></i> View Projects</a>
           </div>
@@ -633,8 +667,8 @@
     <section id="about"><div class="reveal">
       <h2 class="section-title">About</h2>
       <div class="about-card glass glow-border">
-        <i class="fas fa-chart-bar"></i>
-        <p>BCA (Bachelor of Computer Applications) graduate specializing in Data Analytics and Python scripting. Experienced in developing relational database systems, extracting insights, and building responsive web applications for course projects.</p>
+        <i class="fas fa-user-graduate"></i>
+        <p>Motivated BCA graduate seeking an entry-level opportunity in the IT industry. Eager to apply technical knowledge, problem-solving skills, and adaptability while gaining hands-on experience and contributing to organizational success.</p>
       </div>
     </div></section>
 
@@ -644,17 +678,17 @@
       <div class="timeline">
         <div class="timeline-item reveal"><div class="card">
           <h3>Bachelor of Computer Applications (BCA)</h3>
-          <div class="meta">Mar Augusthinose College · Mahatma Gandhi University</div>
+          <div class="meta">Mahatma Gandhi University</div>
           <div class="date">2023 – 2026</div>
         </div></div>
         <div class="timeline-item reveal"><div class="card">
-          <h3>Higher Secondary</h3>
-          <div class="meta">ST Augustine's HSS</div>
+          <h3>Higher Secondary Education</h3>
+          <div class="meta">St. Augustines HSS</div>
           <div class="date">2020 – 2022</div>
         </div></div>
         <div class="timeline-item reveal"><div class="card">
-          <h3>SSLC</h3>
-          <div class="meta">St Joseph's HS</div>
+          <h3>SSLC (10th)</h3>
+          <div class="meta">St. Josephs HS</div>
           <div class="date">2019 – 2020</div>
         </div></div>
       </div>
@@ -666,46 +700,73 @@
       <div class="skills-grid">
         <div class="skill-card"><i class="fab fa-python"></i><span>Python</span></div>
         <div class="skill-card"><i class="fas fa-cog"></i><span>Django</span></div>
+        <div class="skill-card"><i class="fas fa-database"></i><span>MySQL</span></div>
+        <div class="skill-card"><i class="fas fa-database"></i><span>SQLite</span></div>
         <div class="skill-card"><i class="fab fa-html5"></i><span>HTML</span></div>
         <div class="skill-card"><i class="fab fa-css3-alt"></i><span>CSS</span></div>
-        <div class="skill-card"><i class="fab fa-js-square"></i><span>JavaScript</span></div>
-        <div class="skill-card"><i class="fas fa-database"></i><span>SQL</span></div>
-        <div class="skill-card"><i class="fab fa-git-alt"></i><span>Git</span></div>
-        <div class="skill-card"><i class="fab fa-bootstrap"></i><span>Bootstrap</span></div>
-        <div class="skill-card"><i class="fas fa-laptop"></i><span>Responsive</span></div>
-        <div class="skill-card"><i class="fas fa-server"></i><span>DB Management</span></div>
-        <div class="skill-card"><i class="fas fa-brain"></i><span>Problem Solving</span></div>
-        <div class="skill-card"><i class="fas fa-users"></i><span>Teamwork</span></div>
+        <div class="skill-card"><i class="fas fa-file-excel"></i><span>Excel</span></div>
+        <div class="skill-card"><i class="fas fa-chart-pie"></i><span>Power BI</span></div>
+        <div class="skill-card"><i class="fab fa-git-alt"></i><span>GitHub</span></div>
+        <div class="skill-card"><i class="fas fa-laptop-code"></i><span>PyCharm</span></div>
+        <div class="skill-card"><i class="fas fa-comments"></i><span>Communication</span></div>
+        <div class="skill-card"><i class="fas fa-users"></i><span>Team Work</span></div>
       </div>
     </div></section>
 
-    <!-- projects -->
+    <!-- projects — from resume + requested Green Store & Turf Booking -->
     <section id="projects"><div class="reveal">
       <h2 class="section-title">Projects</h2>
       <div class="project-grid">
+        <!-- Student Management System (from resume) -->
         <div class="project-card glass glow-border">
-          <div class="img-placeholder"><i class="fas fa-brain"></i></div>
-          <h3>Customer Churn Analytics</h3>
-          <p>Machine Learning pipeline built in pure Python using a Gaussian Naive Bayes classifier to analyze customer profiles and predict retention risk. Includes a FastAPI endpoint and Streamlit dashboard.</p>
+          <div class="img-placeholder"><i class="fas fa-user-graduate"></i></div>
+          <h3>Student Management System</h3>
+          <div class="tech-tags">
+            <span>Python</span><span>Django</span><span>SQLite</span><span>HTML</span><span>CSS</span>
+          </div>
+          <p>Engineered a full-stack Student Management System featuring student registration, attendance tracking, academic record management, and role-based access control. Designed a fully responsive frontend for a seamless experience across desktop and mobile.</p>
           <div class="btn-group">
-            <a href="https://github.com/johnyjohn2003/customer-churn-analytics" class="btn btn-primary" style="padding:10px 24px;">GitHub Code</a>
+            <a href="https://github.com/johnyjohn2003" class="btn btn-primary" style="padding:10px 24px;">GitHub Code</a>
           </div>
         </div>
+        <!-- Green Store -->
         <div class="project-card glass glow-border">
           <div class="img-placeholder"><i class="fas fa-shopping-cart"></i></div>
           <h3>Green Store</h3>
+          <div class="tech-tags">
+            <span>Django</span><span>Python</span><span>SQLite</span><span>HTML</span><span>CSS</span>
+          </div>
           <p>Full-featured Django e-commerce platform showcasing interactive product cataloging, secure shopping cart checkout processes, and administrative dashboards.</p>
           <div class="btn-group">
             <a href="https://github.com/johnyjohn2003/green-store" class="btn btn-primary" style="padding:10px 24px;">GitHub Code</a>
           </div>
         </div>
+        <!-- Turf Booking System -->
         <div class="project-card glass glow-border">
           <div class="img-placeholder"><i class="fas fa-calendar-alt"></i></div>
           <h3>Turf Booking System</h3>
+          <div class="tech-tags">
+            <span>Django</span><span>Python</span><span>SQLite</span><span>HTML</span><span>CSS</span>
+          </div>
           <p>An online reservation application designed with Django for sports scheduling, slot bookings, and trainer availability management.</p>
           <div class="btn-group">
             <a href="https://github.com/johnyjohn2003/turf-booking-system" class="btn btn-primary" style="padding:10px 24px;">GitHub Code</a>
           </div>
+        </div>
+      </div>
+    </div></section>
+
+    <!-- certificate -->
+    <section id="certificate"><div class="reveal">
+      <h2 class="section-title">Certificate</h2>
+      <div class="cert-card glass glow-border">
+        <i class="fas fa-shield-alt"></i>
+        <div>
+          <h3>Cisco Networking Academy — CyberOps Associate</h3>
+          <p>Key Skills: Data and Event Analysis, Threat Detection, Malware Analysis, Network Attacks</p>
+          <a href="https://credly.com" target="_blank" class="btn btn-outline">
+            <i class="fas fa-external-link-alt"></i> Verify on Credly
+          </a>
         </div>
       </div>
     </div></section>
@@ -740,32 +801,20 @@
         <div class="contact-info">
           <p><i class="fas fa-phone-alt"></i> 8590667692</p>
           <p><i class="fas fa-envelope"></i> johneyjohnkureekunnel@gmail.com</p>
-          <p><i class="fas fa-map-pin"></i> Pala, Kottayam, Kerala</p>
+          <p><i class="fas fa-map-pin"></i> Kottayam, India</p>
           <div class="social-icons">
-    <a href="https://github.com/johnyjohn2003" target="_blank">
-        <i class="fab fa-github"></i>
-    </a>
-
-    <a href="https://www.linkedin.com/in/johny-john-a753a7298" target="_blank">
-        <i class="fab fa-linkedin-in"></i>
-    </a>
-
-    <a href="https://t.me/Johny31_7" target="_blank">
-        <i class="fab fa-telegram-plane"></i>
-    </a>
-
-    <a href="mailto:johneyjohnkureekunnel@gmail.com">
-        <i class="fas fa-envelope"></i>
-    </a>
-</div>
+            <a href="https://github.com/johnyjohn2003" target="_blank"><i class="fab fa-github"></i></a>
+            <a href="https://www.linkedin.com/in/johny-john-a753a7298" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+            <a href="https://t.me/Johny31_7" target="_blank"><i class="fab fa-telegram-plane"></i></a>
+            <a href="mailto:johneyjohnkureekunnel@gmail.com"><i class="fas fa-envelope"></i></a>
           </div>
         </div>
         <div>
-          <p style="font-weight:300; color:#b0baff;">Feel free to reach out — let’s build something amazing.</p>
+          <p style="font-weight:300; color:#b0baff;">Feel free to reach out — let's build something amazing.</p>
           <div style="margin-top:20px; display:flex; gap:12px; flex-wrap:wrap;">
             <a href="https://api.whatsapp.com/send?phone=918590667692&text=Hi%20Johny,%20I%20visited%20your%20portfolio." target="_blank" class="btn btn-primary">
-    <i class="fab fa-whatsapp"></i> Send Message
-</a>
+              <i class="fab fa-whatsapp"></i> Send Message
+            </a>
           </div>
         </div>
       </div>
@@ -833,8 +882,8 @@
       document.getElementById('scroll-progress').style.width = progress + '%';
     });
 
-    // typing effect
-    const phrases = ['Data Analyst', 'Python Developer', 'BCA Graduate', 'SQL Specialist'];
+    // typing effect — updated for resume roles
+    const phrases = ['Python Developer', 'Django Developer', 'BCA Graduate', 'IT Professional'];
     let idx = 0, charIdx = 0, isDeleting = false;
     const typedEl = document.getElementById('typed-text');
     function typeLoop() {
