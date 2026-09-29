@@ -180,6 +180,37 @@ nav,nav.s{top:14px;left:var(--pad);right:var(--pad);padding:12px 26px;border-rad
 .tl div::before{background:var(--red);box-shadow:0 0 12px var(--red)}
 nav ul a::after,.ul::after{background:var(--red)}
 .hm::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--red);margin-right:10px}
+/* refined scale + glass everywhere */
+#hero h1{font-size:clamp(3rem,10vw,8.5rem);line-height:.9;letter-spacing:-.05em;margin:0 var(--pad) 56px;padding:.08em .32em .14em;width:fit-content;overflow:hidden;border-radius:36px}
+.hm{left:auto;right:var(--pad);bottom:14px}
+.scene h2{font-size:clamp(2rem,5.2vw,5rem);line-height:1;letter-spacing:-.04em;max-width:min(90vw,900px);width:fit-content;padding:22px 34px;border-radius:28px}
+.scene .no{font-size:clamp(6rem,18vw,18rem)}
+#cs h2{font-size:clamp(2.2rem,6vw,6rem);line-height:1;letter-spacing:-.04em;width:fit-content;padding:.25em .5em;border-radius:32px}
+#man h2{font-size:clamp(1.8rem,4.6vw,4.6rem)}
+#about h2{font-size:clamp(2.2rem,6vw,6rem)}
+#stmt h2{font-size:clamp(2.2rem,6.5vw,6.5rem)}
+#contact h2{font-size:clamp(2.4rem,8vw,8rem);width:fit-content}
+.cat h3{font-size:clamp(2.6rem,9vw,8rem)}
+.cat ul{font-size:clamp(1rem,2vw,1.7rem)}
+.cat{padding:36px 44px;border-radius:36px;min-width:min(58vw,720px)}
+#tech .grid{gap:14px}
+.t{font-size:clamp(1.6rem,4.6vw,4.4rem);padding:.1em .45em;border-radius:.4em}
+.links a{font-size:clamp(1.3rem,3.6vw,3.2rem)}
+.nx{font-size:clamp(1.6rem,5vw,4.5rem);width:100%;margin:40px 0 var(--pad);padding:44px 48px;border-radius:36px}
+#man h2,#about h2,#stmt h2,#contact h2{padding:clamp(24px,4vw,56px);border-radius:36px}
+#stmt h2{max-width:90vw}
+#hero .ph{padding:14px 20px;border-radius:20px}
+.hs{padding:20px 24px;border-radius:24px}
+.hm,.wk-t{padding:9px 18px;border-radius:999px}
+footer{margin:0 var(--pad) 20px;border-radius:28px}
+#burger,#x{padding:9px 18px;border-radius:999px}
+#x{mix-blend-mode:normal}
+#hero h1,#hero .ph,.hs,.hm,.wk-t,.scene h2,.cat,.t,.nx,#man h2,#about h2,#stmt h2,#contact h2,#cs h2,footer,#burger,#x{
+ background:radial-gradient(360px circle at var(--sx,50%) var(--sy,-40%),rgba(255,255,255,.16),transparent 45%),var(--gl);
+ -webkit-backdrop-filter:blur(24px) saturate(1.7) brightness(1.08);backdrop-filter:blur(24px) saturate(1.7) brightness(1.08);
+ border:1px solid rgba(255,255,255,.14);
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.28),inset 0 -1px 0 rgba(255,255,255,.03),inset 0 0 24px rgba(255,255,255,.03),0 30px 70px -20px rgba(0,0,0,.6)}
+.t:hover{border-color:rgba(225,6,0,.6)}
 @media(max-width:820px){
  nav ul{display:none}#burger{display:block}
  .cols,.blk{grid-template-columns:1fr}.tl{grid-template-columns:1fr 1fr}
@@ -474,7 +505,7 @@ if(matchMedia('(hover:hover)').matches){
 })();
 
 /* glass specular follows the pointer */
-const G='nav,.f,.blk,.tl div,.tags span,.edu div,.links a,.cols,.shot';
+const G='nav,.f,.blk,.tl div,.tags span,.edu div,.links a,.cols,.hs,.hm,.cat,.t,.nx,#hero h1,#man h2,#about h2,#stmt h2,#contact h2,#cs h2,footer';
 document.addEventListener('pointermove',e=>{const g=e.target.closest&&e.target.closest(G);if(!g)return;const r=g.getBoundingClientRect();g.style.setProperty('--sx',e.clientX-r.left+'px');g.style.setProperty('--sy',e.clientY-r.top+'px')},{passive:true});
 
 /* liquid cursor trail: small goo-filtered cluster that lags behind the pointer */
