@@ -37,7 +37,7 @@
 
     @media (hover: none), (pointer: coarse) {
       body, button, a { cursor: auto; }
-      .rocket-cursor-wrap, #cursor-trail-canvas, .rocket-pulse { display: none !important; }
+      .plane-cursor-wrap, #cursor-trail-canvas, .plane-pulse { display: none !important; }
     }
 
     ::selection { background: rgba(255, 149, 0, 0.3); color: #fff; }
@@ -69,9 +69,9 @@
     }
 
     /* ============================================
-       PREMIUM ROCKET CURSOR
+       PREMIUM PAPER AIRPLANE CURSOR
        ============================================ */
-    .rocket-cursor-wrap {
+    .plane-cursor-wrap {
       position: fixed;
       top: 0;
       left: 0;
@@ -83,70 +83,59 @@
       transform: translate3d(-100px, -100px, 0);
     }
 
-    .rocket-cursor-inner {
+    .plane-cursor-inner {
       position: absolute;
       top: 0;
       left: 0;
-      width: 32px;
-      height: 32px;
-      margin-left: -16px;
-      margin-top: -16px;
+      width: 28px;
+      height: 28px;
+      margin-left: -14px;
+      margin-top: -14px;
       will-change: transform;
       transform-origin: center center;
-      filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5))
-              drop-shadow(0 0 8px rgba(255, 149, 0, 0.35));
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6))
+              drop-shadow(0 0 8px rgba(255, 184, 77, 0.4));
       transition: filter 0.4s cubic-bezier(0.25, 1, 0.5, 1);
     }
 
-    .rocket-cursor-svg {
+    .plane-cursor-svg {
       width: 100%;
       height: 100%;
       overflow: visible;
       display: block;
     }
 
-    .rocket-shape {
+    .plane-shape {
       transform-origin: center center;
       transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
-    /* Thruster flame — trailing behind rocket (below the nose) */
-    .rocket-flame {
-      transform-origin: 16px 24px;
-      animation: flameFlicker 0.15s steps(2) infinite;
-      will-change: transform, opacity;
-    }
-    @keyframes flameFlicker {
-      0%, 100% { transform: scaleY(1) scaleX(1); }
-      50% { transform: scaleY(0.85) scaleX(0.92); }
-    }
-
-    /* Ambient glow halo behind rocket */
-    .rocket-glow {
+    /* Soft ambient glow halo behind plane */
+    .plane-glow {
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 60px;
-      height: 60px;
-      margin-left: -30px;
-      margin-top: -30px;
+      width: 44px;
+      height: 44px;
+      margin-left: -22px;
+      margin-top: -22px;
       border-radius: 50%;
       pointer-events: none;
-      background: radial-gradient(circle, rgba(255, 149, 0, 0.18) 0%, rgba(255, 184, 77, 0.08) 40%, transparent 70%);
+      background: radial-gradient(circle, rgba(255, 184, 77, 0.28) 0%, rgba(255, 149, 0, 0.12) 40%, transparent 70%);
       mix-blend-mode: screen;
-      opacity: 0.8;
+      opacity: 0.85;
       transition: opacity 0.4s, transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
       will-change: transform, opacity;
     }
 
-    /* Click pulse */
-    .rocket-pulse {
+    /* Click pulse ring */
+    .plane-pulse {
       position: fixed;
       top: 0;
       left: 0;
       width: 18px;
       height: 18px;
-      border: 1.5px solid rgba(255, 149, 0, 0.8);
+      border: 1.5px solid rgba(255, 184, 77, 0.9);
       border-radius: 50%;
       pointer-events: none;
       z-index: 100001;
@@ -154,31 +143,31 @@
       opacity: 0;
       will-change: transform, opacity;
     }
-    .rocket-pulse.fire {
-      animation: rocketPulse 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+    .plane-pulse.fire {
+      animation: planePulse 0.7s cubic-bezier(0.25, 1, 0.5, 1);
     }
-    @keyframes rocketPulse {
+    @keyframes planePulse {
       0% { transform: translate(-50%, -50%) scale(0.4); opacity: 1; border-width: 2px; }
       100% { transform: translate(-50%, -50%) scale(5); opacity: 0; border-width: 0.5px; }
     }
 
-    /* Hover state */
-    body.pointer-hover .rocket-cursor-inner {
-      filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.6))
-              drop-shadow(0 0 16px rgba(255, 184, 77, 0.6))
-              drop-shadow(0 0 30px rgba(255, 110, 0, 0.45));
+    /* Hover state — glow up + scale */
+    body.pointer-hover .plane-cursor-inner {
+      filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.7))
+              drop-shadow(0 0 16px rgba(255, 184, 77, 0.8))
+              drop-shadow(0 0 30px rgba(255, 149, 0, 0.5));
     }
-    body.pointer-hover .rocket-shape {
-      transform: scale(1.2);
+    body.pointer-hover .plane-shape {
+      transform: scale(1.25);
     }
-    body.pointer-hover .rocket-glow {
+    body.pointer-hover .plane-glow {
       opacity: 1;
       transform: scale(1.5);
     }
 
-    /* Click state */
-    body.pointer-click .rocket-shape {
-      transform: scale(0.85);
+    /* Click state — squish */
+    body.pointer-click .plane-shape {
+      transform: scale(0.82);
     }
 
     /* Trail canvas */
@@ -1735,112 +1724,114 @@
     </div>
   </div>
 
-  <!-- ============ PREMIUM ROCKET CURSOR ============ -->
-  <div class="rocket-cursor-wrap" id="rocketWrap">
-    <div class="rocket-cursor-inner" id="rocketInner">
-      <div class="rocket-glow" id="rocketGlow"></div>
-      <svg class="rocket-cursor-svg" viewBox="0 0 32 32">
+  <!-- ============ PAPER AIRPLANE CURSOR ============ -->
+  <div class="plane-cursor-wrap" id="planeWrap">
+    <div class="plane-cursor-inner" id="planeInner">
+      <div class="plane-glow" id="planeGlow"></div>
+      <svg class="plane-cursor-svg" viewBox="0 0 32 32">
         <defs>
-          <!-- Body gradient — white metallic -->
-          <linearGradient id="rocketBody" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stop-color="rgba(200, 210, 225, 0.9)"/>
-            <stop offset="35%" stop-color="rgba(255, 255, 255, 0.98)"/>
-            <stop offset="65%" stop-color="rgba(255, 255, 255, 1)"/>
-            <stop offset="100%" stop-color="rgba(190, 200, 218, 0.9)"/>
+          <!-- Top wing (bright white) -->
+          <linearGradient id="wingTop" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#ffffff"/>
+            <stop offset="100%" stop-color="#e8eef8"/>
           </linearGradient>
 
-          <!-- Nose cone gradient (warm amber) -->
-          <linearGradient id="rocketNose" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="rgba(255, 214, 153, 1)"/>
-            <stop offset="50%" stop-color="rgba(255, 184, 77, 0.98)"/>
-            <stop offset="100%" stop-color="rgba(255, 149, 0, 0.9)"/>
+          <!-- Left wing (shaded) -->
+          <linearGradient id="wingLeft" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#f0f4fb"/>
+            <stop offset="100%" stop-color="#b8c2d6"/>
           </linearGradient>
 
-          <!-- Window gradient (blue glass) -->
-          <radialGradient id="rocketWindow" cx="40%" cy="35%" r="65%">
-            <stop offset="0%" stop-color="rgba(140, 220, 255, 0.95)"/>
-            <stop offset="60%" stop-color="rgba(60, 140, 220, 0.9)"/>
-            <stop offset="100%" stop-color="rgba(20, 60, 120, 0.9)"/>
+          <!-- Fuselage (center fold) -->
+          <linearGradient id="fuselage" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#d6dce8"/>
+            <stop offset="50%" stop-color="#ffffff"/>
+            <stop offset="100%" stop-color="#c8d0e0"/>
+          </linearGradient>
+
+          <!-- Nose tip highlight -->
+          <radialGradient id="noseGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#ffffff"/>
+            <stop offset="100%" stop-color="#ffd699" stop-opacity="0.6"/>
           </radialGradient>
 
-          <!-- Fin gradient -->
-          <linearGradient id="rocketFin" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="rgba(255, 149, 0, 0.95)"/>
-            <stop offset="100%" stop-color="rgba(200, 90, 0, 0.85)"/>
-          </linearGradient>
-
-          <!-- Flame gradient -->
-          <radialGradient id="flameOuter" cx="50%" cy="20%" r="80%">
-            <stop offset="0%" stop-color="rgba(255, 255, 200, 0.95)"/>
-            <stop offset="30%" stop-color="rgba(255, 220, 100, 0.9)"/>
-            <stop offset="60%" stop-color="rgba(255, 149, 0, 0.7)"/>
-            <stop offset="100%" stop-color="rgba(255, 90, 0, 0)"/>
-          </radialGradient>
+          <filter id="planeShadow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="0.5"/>
+            <feOffset dx="0.5" dy="1" result="off"/>
+            <feComponentTransfer><feFuncA type="linear" slope="0.6"/></feComponentTransfer>
+            <feMerge>
+              <feMergeNode/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
         </defs>
 
-        <g class="rocket-shape" id="rocketShape">
-          <!-- Outer flame (behind rocket) -->
-          <g class="rocket-flame">
-            <ellipse cx="16" cy="27" rx="3.2" ry="6" fill="url(#flameOuter)"/>
-            <ellipse cx="16" cy="26" rx="2" ry="4" fill="rgba(255, 240, 200, 0.9)"/>
-            <ellipse cx="16" cy="25" rx="1" ry="2.5" fill="rgba(255, 255, 255, 0.95)"/>
-          </g>
+        <!-- Plane drawn pointing UP. Nose at (16, 3), tail at (16, 26). -->
+        <!-- We rotate the group in JS so the nose always points in movement direction. -->
+        <g class="plane-shape" id="planeShape" filter="url(#planeShadow)">
 
-          <!-- Left fin -->
-          <path d="M 12 22 L 8 26 L 8 28 L 13 26 Z"
-                fill="url(#rocketFin)"
-                stroke="rgba(255, 200, 100, 0.6)"
-                stroke-width="0.2"/>
-
-          <!-- Right fin -->
-          <path d="M 20 22 L 24 26 L 24 28 L 19 26 Z"
-                fill="url(#rocketFin)"
-                stroke="rgba(255, 200, 100, 0.6)"
-                stroke-width="0.2"/>
-
-          <!-- Main body (fuselage) -->
+          <!-- LEFT WING (below/behind — shaded darker) -->
           <path d="M 16 3
-                   C 13 8, 12 15, 12 22
-                   L 20 22
-                   C 20 15, 19 8, 16 3 Z"
-                fill="url(#rocketBody)"
-                stroke="rgba(255, 255, 255, 0.9)"
-                stroke-width="0.3"/>
+                   L 3 22
+                   L 16 18 Z"
+                fill="url(#wingLeft)"
+                stroke="#a8b2c8"
+                stroke-width="0.3"
+                stroke-linejoin="round"/>
 
-          <!-- Nose cone -->
+          <!-- RIGHT WING (top surface — bright) -->
           <path d="M 16 3
-                   C 13.5 6, 13 9, 13 11
-                   L 19 11
-                   C 19 9, 18.5 6, 16 3 Z"
-                fill="url(#rocketNose)"
-                stroke="rgba(255, 255, 255, 0.4)"
-                stroke-width="0.2"/>
+                   L 29 22
+                   L 16 18 Z"
+                fill="url(#wingTop)"
+                stroke="#c8d0e0"
+                stroke-width="0.3"
+                stroke-linejoin="round"/>
 
-          <!-- Body stripe (dark accent) -->
-          <rect x="12.5" y="20" width="7" height="2.5" fill="rgba(60, 70, 90, 0.75)" rx="0.4"/>
+          <!-- CENTER FUSELAGE (folded ridge) -->
+          <path d="M 16 3
+                   L 16 18
+                   L 13 23
+                   L 16 28
+                   L 19 23
+                   L 16 18 Z"
+                fill="url(#fuselage)"
+                stroke="#b8c2d6"
+                stroke-width="0.3"
+                stroke-linejoin="round"/>
 
-          <!-- Window (blue glass porthole) -->
-          <circle cx="16" cy="15" r="2.2" fill="url(#rocketWindow)" stroke="rgba(255, 255, 255, 0.7)" stroke-width="0.3"/>
-          <circle cx="15.3" cy="14.3" r="0.7" fill="rgba(255, 255, 255, 0.85)"/>
+          <!-- BOTTOM KEEL (small triangle) -->
+          <path d="M 16 18
+                   L 13 23
+                   L 16 28
+                   L 19 23 Z"
+                fill="#a8b2c8"
+                stroke="#8a94a8"
+                stroke-width="0.25"
+                stroke-linejoin="round"/>
 
-          <!-- Body highlight (vertical shine) -->
-          <path d="M 14 6 L 14 21"
-                stroke="rgba(255, 255, 255, 0.55)"
-                stroke-width="0.4"
-                stroke-linecap="round"/>
+          <!-- CREASE LINES for origami feel -->
+          <line x1="16" y1="3" x2="16" y2="18"
+                stroke="#ffffff" stroke-width="0.4" opacity="0.9"/>
+          <line x1="16" y1="18" x2="13" y2="23"
+                stroke="#8892a8" stroke-width="0.25" opacity="0.6"/>
+          <line x1="16" y1="18" x2="19" y2="23"
+                stroke="#8892a8" stroke-width="0.25" opacity="0.6"/>
+          <line x1="16" y1="3" x2="3" y2="22"
+                stroke="#8892a8" stroke-width="0.2" opacity="0.5"/>
+          <line x1="16" y1="3" x2="29" y2="22"
+                stroke="#8892a8" stroke-width="0.2" opacity="0.4"/>
 
-          <!-- Left fin fold line -->
-          <line x1="12" y1="22" x2="9" y2="27" stroke="rgba(255, 255, 255, 0.3)" stroke-width="0.2"/>
-
-          <!-- Right fin fold line -->
-          <line x1="20" y1="22" x2="23" y2="27" stroke="rgba(255, 255, 255, 0.3)" stroke-width="0.2"/>
+          <!-- NOSE TIP SHINE (glowing point) -->
+          <circle cx="16" cy="4" r="1.2" fill="url(#noseGlow)"/>
+          <circle cx="16" cy="3.5" r="0.5" fill="#ffffff"/>
         </g>
       </svg>
     </div>
   </div>
 
-  <!-- Click pulse element -->
-  <div class="rocket-pulse" id="rocketPulse"></div>
+  <!-- Click pulse ring -->
+  <div class="plane-pulse" id="planePulse"></div>
 
   <!-- Trail canvas -->
   <canvas id="cursor-trail-canvas"></canvas>
@@ -2291,16 +2282,16 @@
     });
 
     /* ============================================
-       PREMIUM ROCKET CURSOR
+       PAPER AIRPLANE CURSOR
        ============================================ */
-    (function initRocketCursor() {
-      const wrap = document.getElementById('rocketWrap');
-      const inner = document.getElementById('rocketInner');
-      const shape = document.getElementById('rocketShape');
-      const glow = document.getElementById('rocketGlow');
-      const pulse = document.getElementById('rocketPulse');
+    (function initPlaneCursor() {
+      const wrap = document.getElementById('planeWrap');
+      const inner = document.getElementById('planeInner');
+      const shape = document.getElementById('planeShape');
+      const glow = document.getElementById('planeGlow');
+      const pulse = document.getElementById('planePulse');
 
-      // Physics
+      // Physics state
       let mouseX = window.innerWidth / 2;
       let mouseY = window.innerHeight / 2;
       let posX = mouseX;
@@ -2308,8 +2299,8 @@
       let velX = 0, velY = 0;
       let speed = 0;
 
-      // SVG rocket nose points UP at rotation 0.
-      // atan2(dy,dx) gives 0=right, PI/2=down. Add 90 to align nose-up basis.
+      // SVG plane drawn with nose pointing UP at rotation 0.
+      // atan2(dy,dx) gives 0=right, +PI/2=down. Add +90° so nose-up basis aligns.
       let rotation = 0;
       let targetRotation = 0;
       let banking = 0;
@@ -2357,9 +2348,10 @@
 
         if (rawSpeed > 0.4) {
           const angleDeg = Math.atan2(velY, velX) * (180 / Math.PI);
-          targetRotation = angleDeg + 90; // nose-up basis
+          targetRotation = angleDeg + 90;
         }
 
+        // Shortest-path angle lerp
         let diff = targetRotation - rotation;
         while (diff > 180) diff -= 360;
         while (diff < -180) diff += 360;
@@ -2372,17 +2364,9 @@
         wrap.style.transform = `translate3d(${posX}px, ${posY}px, 0)`;
         inner.style.transform = `rotate(${rotation}deg) skewX(${banking * 0.12}deg)`;
 
-        // Flame intensity scales with speed
-        const flameIntensity = Math.min(1, 0.4 + speed * 0.04);
-        const flame = shape.querySelector('.rocket-flame');
-        if (flame) {
-          flame.style.transform = `scaleY(${flameIntensity + 0.5}) scaleX(${0.9 + flameIntensity * 0.3})`;
-          flame.style.opacity = 0.7 + flameIntensity * 0.3;
-        }
-
         // Motion blur at high speed
-        if (speed > 10) {
-          inner.style.filter = `drop-shadow(0 2px 6px rgba(0,0,0,0.5)) drop-shadow(0 0 12px rgba(255,149,0,0.5)) blur(${Math.min((speed - 10) * 0.06, 0.6)}px)`;
+        if (speed > 12) {
+          inner.style.filter = `drop-shadow(0 2px 4px rgba(0,0,0,0.6)) drop-shadow(0 0 8px rgba(255,184,77,0.4)) blur(${Math.min((speed - 12) * 0.05, 0.6)}px)`;
         } else {
           inner.style.filter = '';
         }
@@ -2398,9 +2382,9 @@
     })();
 
     /* ============================================
-       SUBTLE SPARK TRAIL
+       SUBTLE ENERGY TRAIL
        ============================================ */
-    (function initRocketTrail() {
+    (function initPlaneTrail() {
       const canvas = document.getElementById('cursor-trail-canvas');
       if (!canvas) return;
       const ctx = canvas.getContext('2d');
@@ -2408,7 +2392,7 @@
       canvas.height = window.innerHeight;
 
       const particles = [];
-      const MAX = 55;
+      const MAX = 45;
 
       let mx = window.innerWidth / 2, my = window.innerHeight / 2;
       let lastMx = mx, lastMy = my;
@@ -2421,21 +2405,16 @@
         const dist = Math.sqrt(dx * dx + dy * dy);
 
         if (dist > 4 && particles.length < MAX) {
-          // Sparks trail opposite of movement (like rocket exhaust)
-          const count = Math.min(Math.floor(dist / 10) + 1, 2);
-          for (let i = 0; i < count; i++) {
-            particles.push({
-              x: mx - dx * 0.3 + (Math.random() - 0.5) * 8,
-              y: my - dy * 0.3 + (Math.random() - 0.5) * 8,
-              vx: -dx * 0.12 + (Math.random() - 0.5) * 0.7,
-              vy: -dy * 0.12 + (Math.random() - 0.5) * 0.7,
-              life: 1,
-              decay: 0.035 + Math.random() * 0.03,
-              size: 0.8 + Math.random() * 1.6,
-              // Rocket exhaust colors: warm gold/amber/orange
-              color: Math.random() > 0.7 ? '255, 240, 200' : (Math.random() > 0.5 ? '255, 184, 77' : '255, 120, 0')
-            });
-          }
+          particles.push({
+            x: mx + (Math.random() - 0.5) * 6,
+            y: my + (Math.random() - 0.5) * 6,
+            vx: -dx * 0.06 + (Math.random() - 0.5) * 0.5,
+            vy: -dy * 0.06 + (Math.random() - 0.5) * 0.5,
+            life: 1,
+            decay: 0.035 + Math.random() * 0.03,
+            size: 0.9 + Math.random() * 1.6,
+            color: Math.random() > 0.5 ? '255, 255, 255' : '255, 214, 153'
+          });
         }
         lastMx = mx;
         lastMy = my;
@@ -2453,18 +2432,18 @@
           const p = particles[i];
           p.x += p.vx;
           p.y += p.vy;
-          p.vx *= 0.93;
-          p.vy *= 0.93;
+          p.vx *= 0.94;
+          p.vy *= 0.94;
           p.life -= p.decay;
           if (p.life <= 0) { particles.splice(i, 1); continue; }
 
           const r = p.size * p.life;
-          const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r * 2.8);
-          grad.addColorStop(0, `rgba(${p.color}, ${p.life * 0.85})`);
+          const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r * 2.5);
+          grad.addColorStop(0, `rgba(${p.color}, ${p.life * 0.75})`);
           grad.addColorStop(1, `rgba(${p.color}, 0)`);
           ctx.fillStyle = grad;
           ctx.beginPath();
-          ctx.arc(p.x, p.y, r * 2.8, 0, Math.PI * 2);
+          ctx.arc(p.x, p.y, r * 2.5, 0, Math.PI * 2);
           ctx.fill();
         }
 
