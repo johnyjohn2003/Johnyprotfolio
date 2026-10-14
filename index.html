@@ -583,5 +583,185 @@ x.addEventListener('click',closeCS);
 addEventListener('keydown',e=>{if(e.key==='Escape'){closeCS();closeMenu()}});
 addEventListener('load',()=>ScrollTrigger.refresh());
 </script>
+<!-- ===== 3D LAPTOP ADD-ON =====
+Paste this whole block right before </body>, AFTER your existing <script> tags.
+Nothing else in your file is touched. Uses the three.js r128 you already load. -->
+<style>#lp{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+/* black foreground layers -> frosted glass, so the laptop shows through */
+.scene{background:rgba(5,5,5,.34)!important;-webkit-backdrop-filter:blur(16px) saturate(1.1);backdrop-filter:blur(16px) saturate(1.1)}
+#cs{background:radial-gradient(circle at 15% 8%,rgba(150,22,16,.22),transparent 42%),rgba(5,5,5,.5)!important;-webkit-backdrop-filter:blur(22px);backdrop-filter:blur(22px)}
+#menu{background:rgba(5,5,5,.55)!important;-webkit-backdrop-filter:blur(22px);backdrop-filter:blur(22px)}
+#hero .blobs{opacity:.12}</style>
+<canvas id="lp" aria-hidden="true"></canvas>
+<script>
+(function(){
+if(!window.THREE)return;
+const cv=document.getElementById('lp'),mob=innerWidth<820,rm=matchMedia('(prefers-reduced-motion:reduce)').matches;
+const cl=(v,a=0,b=1)=>Math.min(b,Math.max(a,v)),sst=(a,b,v)=>{v=cl((v-a)/(b-a));return v*v*(3-2*v)};
+let R;try{R=new THREE.WebGLRenderer({canvas:cv,alpha:true,antialias:true,powerPreference:'high-performance'})}catch(e){cv.remove();return}
+R.outputEncoding=THREE.sRGBEncoding;R.toneMapping=THREE.ACESFilmicToneMapping;R.toneMappingExposure=1.1;
+R.shadowMap.enabled=true;R.shadowMap.type=THREE.PCFSoftShadowMap;
+R.setPixelRatio(Math.min(devicePixelRatio,mob?1.25:2));R.setSize(innerWidth,innerHeight,false);
+const S=new THREE.Scene(),C=new THREE.PerspectiveCamera(30,innerWidth/innerHeight,.5,80);
+const off=0,FY=.014;
+
+/* ---------- studio environment (soft boxes -> PBR reflections) ---------- */
+const es=new THREE.Scene();es.background=new THREE.Color(0x060606);
+const sb=(w,h,x,y,z,c,i)=>{const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({color:new THREE.Color(c).multiplyScalar(i),side:2}));m.position.set(x,y,z);m.lookAt(0,0,0);es.add(m)};
+sb(14,8,0,12,2,0xffffff,3);sb(3,12,-11,3,4,0xfff1e0,2.5);sb(2,10,11,4,-2,0xd0d8e8,2);sb(20,1.5,0,2,-12,0xc4160f,2.2);sb(16,3,0,1,12,0x888888,.6);
+const pm=new THREE.PMREMGenerator(R);S.environment=pm.fromScene(es,.04).texture;pm.dispose();
+
+/* ---------- lights ---------- */
+S.add(new THREE.HemisphereLight(0x8a8f98,0x0a0a0a,.25));
+const key=new THREE.SpotLight(0xfff0e0,1.6,40,.42,1,1);key.position.set(off-5,9,6);key.target.position.set(off,0,0);
+key.castShadow=true;key.shadow.mapSize.set(mob?1024:2048,mob?1024:2048);key.shadow.bias=-.0004;key.shadow.camera.near=4;key.shadow.camera.far=25;S.add(key,key.target);
+const rim=new THREE.DirectionalLight(0xd9d3c8,1.1);rim.position.set(off+5,3,-7);rim.target.position.set(off,1,0);S.add(rim,rim.target);
+const red=new THREE.PointLight(0xc4160f,1.2,14);red.position.set(off-4,1.5,-4);S.add(red);
+
+/* ---------- helpers ---------- */
+const CS=mob?3:8,BS=mob?1:3;
+function rrPath(p,cx,cy,w,d,r){const x0=cx-w/2,x1=cx+w/2,y0=cy-d/2,y1=cy+d/2;p.moveTo(x0+r,y0);p.lineTo(x1-r,y0);p.quadraticCurveTo(x1,y0,x1,y0+r);p.lineTo(x1,y1-r);p.quadraticCurveTo(x1,y1,x1-r,y1);p.lineTo(x0+r,y1);p.quadraticCurveTo(x0,y1,x0,y1-r);p.lineTo(x0,y0+r);p.quadraticCurveTo(x0,y0,x0+r,y0)}
+function shape(w,d,r,holes){const s=new THREE.Shape();rrPath(s,0,0,w,d,r);(holes||[]).forEach(h=>{const p=new THREE.Path();rrPath(p,h[0],h[1],h[2],h[3],h[4]);s.holes.push(p)});return s}
+function slab(sh,depth,bev){const g=new THREE.ExtrudeGeometry(sh,{depth,bevelEnabled:true,bevelThickness:bev,bevelSize:bev,bevelSegments:BS,curveSegments:CS});g.rotateX(-Math.PI/2);g.computeBoundingBox();const b=g.boundingBox;g.translate(0,-b.min.y,0);g.userData.h=b.max.y-b.min.y;return g}
+function brushed(){const c=document.createElement('canvas');c.width=c.height=512;const x=c.getContext('2d');x.fillStyle='rgb(120,120,120)';x.fillRect(0,0,512,512);
+ for(let i=0;i<1400;i++){const v=90+Math.random()*90|0;x.strokeStyle=`rgba(${v},${v},${v},.10)`;x.beginPath();const y=Math.random()*512,s=Math.random()*512;x.moveTo(s,y);x.lineTo(s+40+Math.random()*220,y);x.stroke()}
+ for(let i=0;i<14;i++){const px=Math.random()*512,py=Math.random()*512,r=30+Math.random()*60,g=x.createRadialGradient(px,py,0,px,py,r);g.addColorStop(0,'rgba(190,190,190,.22)');g.addColorStop(1,'rgba(190,190,190,0)');x.fillStyle=g;x.fillRect(px-r,py-r,r*2,r*2)}
+ const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.anisotropy=4;return t}
+const alu=new THREE.MeshStandardMaterial({color:0x8e9095,metalness:1,roughness:.8,roughnessMap:brushed(),envMapIntensity:1.5});
+const dark=new THREE.MeshStandardMaterial({color:0x151516,metalness:.9,roughness:.35});
+const mesh=(g,m,x=0,y=0,z=0,sh=true)=>{const o=new THREE.Mesh(g,m);o.position.set(x,y,z);o.castShadow=o.receiveShadow=sh;return o};
+
+/* ---------- scene root ---------- */
+const L=new THREE.Group();L.position.x=off;S.add(L);
+
+/* floor: soft pool of surface + contact shadow */
+const fc=document.createElement('canvas');fc.width=fc.height=256;{const x=fc.getContext('2d'),g=x.createRadialGradient(128,128,10,128,128,128);g.addColorStop(0,'#fff');g.addColorStop(.55,'#777');g.addColorStop(1,'#000');x.fillStyle=g;x.fillRect(0,0,256,256)}
+const floor=new THREE.Mesh(new THREE.CircleGeometry(9,48),new THREE.MeshStandardMaterial({color:0x1a1a1c,roughness:.4,metalness:.1,alphaMap:new THREE.CanvasTexture(fc),transparent:true,depthWrite:false,envMapIntensity:.7}));
+floor.rotation.x=-Math.PI/2;floor.receiveShadow=true;L.add(floor);
+const cc=document.createElement('canvas');cc.width=cc.height=128;{const x=cc.getContext('2d'),g=x.createRadialGradient(64,64,4,64,64,64);g.addColorStop(0,'rgba(0,0,0,.85)');g.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=g;x.fillRect(0,0,128,128)}
+const cs=new THREE.Mesh(new THREE.PlaneGeometry(4.6,3.4),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(cc),transparent:true,depthWrite:false,opacity:.75}));cs.rotation.x=-Math.PI/2;cs.position.y=.003;L.add(cs);
+
+/* ---------- base ---------- */
+const W=3.3,D=2.1;
+const low=slab(shape(W,D,.11),.03,.006),lowH=low.userData.h;
+const frame=slab(shape(W,D,.11,[[0,.335,3.06,1.22,.03],[0,-.66,1.26,.66,.04]]),.05,.005),frH=frame.userData.h,baseH=lowH+frH;
+L.add(mesh(low,alu,0,FY,0),mesh(frame,alu,0,FY+lowH,0));
+[[-1.35,-.85],[1.35,-.85],[-1.35,.85],[1.35,.85]].forEach(([x,z])=>L.add(mesh(new THREE.CylinderGeometry(.05,.05,FY,14),dark,x,FY/2,z)));
+const well=new THREE.PlaneGeometry(3.06,1.22);well.rotateX(-Math.PI/2);L.add(mesh(well,new THREE.MeshStandardMaterial({color:0x040404,roughness:.9}),0,FY+lowH+.001,-.335,false));
+L.add(mesh(slab(shape(1.2,.6,.05),.04,.004),new THREE.MeshStandardMaterial({color:0x9a9ca0,metalness:1,roughness:.2,envMapIntensity:1.6}),0,FY+lowH,.66));
+
+/* keyboard: every key modelled + instanced */
+const rows=[
+ [-.82,.11,'esc F1 F2 F3 F4 F5 F6 F7 F8 F9 F10 F11 F12 _ ⏻'.split(' ').map(c=>[c=='_'?'':c,1])],
+ [-.64,.17,[...'` 1 2 3 4 5 6 7 8 9 0 - ='.split(' ').map(c=>[c,1]),['delete',2]]],
+ [-.44,.17,[['tab',1.5],...'Q W E R T Y U I O P [ ]'.split(' ').map(c=>[c,1]),['\\',1.5]]],
+ [-.24,.17,[['caps',1.75],..."A S D F G H J K L ; '".split(' ').map(c=>[c,1]),['return',2.25]]],
+ [-.04,.17,[['shift',2.25],...'Z X C V B N M , . /'.split(' ').map(c=>[c,1]),['shift',2.75]]],
+ [.16,.17,[['fn',1],['ctrl',1],['opt',1],['cmd',1.25],['',5.5],['cmd',1.25],['opt',1],['◀',1],['▲▼',1],['▶',1]]]];
+const KEYS=[];rows.forEach(([z,d,ks])=>{let c=0;ks.forEach(([l,w])=>{KEYS.push({x:(c+w/2)*.2-1.5,z,w:w*.2-.024,d,l});c+=w})});
+const kg=slab(shape(.17,.17,.03),.016,.006),kH=kg.userData.h;
+const km=new THREE.InstancedMesh(kg,new THREE.MeshStandardMaterial({color:0x0d0d0e,roughness:.5,metalness:.1,envMapIntensity:.9}),KEYS.length),o3=new THREE.Object3D();
+KEYS.forEach((k,i)=>{o3.position.set(k.x,FY+lowH,k.z);o3.scale.set(k.w/.17,1,k.d/.17);o3.updateMatrix();km.setMatrixAt(i,o3.matrix)});
+km.castShadow=true;L.add(km);
+const lc=document.createElement('canvas');lc.width=1500;lc.height=600;{const x=lc.getContext('2d');x.textAlign='center';x.textBaseline='middle';x.fillStyle='#e8e4dc';
+ KEYS.forEach(k=>{x.font=(k.l.length>1?'500 17px ':'500 30px ')+'Manrope,Arial,sans-serif';x.fillText(k.l,(k.x+1.5)*500,(k.z+.935)*500+1)})}
+const lg=new THREE.PlaneGeometry(3,1.2);lg.rotateX(-Math.PI/2);
+const legM=new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(lc),transparent:true,depthWrite:false,toneMapped:false,color:0x555555});legM.map.anisotropy=8;
+L.add(mesh(lg,legM,0,FY+lowH+kH+.0012,-.335,false));
+
+/* ---------- hinge + lid (rotates about the real hinge axis) ---------- */
+const PY=FY+baseH+.0005+.03,PZ=-D/2+.03;
+const hinge=mesh(new THREE.CylinderGeometry(.03,.03,2.5,18).rotateZ(Math.PI/2),dark,0,PY,PZ);L.add(hinge);
+const P=new THREE.Group();P.position.set(0,PY,PZ);L.add(P);
+const lidG=slab(shape(W,D,.11),.04,.006),lidH=lidG.userData.h;
+P.add(mesh(lidG,alu,0,-.03,D/2-.03));
+const zc=D/2-.03;
+const bz=new THREE.ShapeGeometry(shape(W-.03,D-.03,.1));bz.rotateX(Math.PI/2);
+P.add(mesh(bz,new THREE.MeshStandardMaterial({color:0x020202,roughness:.25,metalness:.2}),0,-.0312,zc,false));
+const sw=3.1,sh_=sw/1.6,sg=new THREE.PlaneGeometry(sw,sh_);sg.rotateX(Math.PI/2);
+const SW=1280,SH=800,sc=document.createElement('canvas');sc.width=SW;sc.height=SH;const g=sc.getContext('2d');
+const tex=new THREE.CanvasTexture(sc);tex.encoding=THREE.sRGBEncoding;tex.anisotropy=8;
+const scr=new THREE.MeshStandardMaterial({color:0x000000,emissive:0xffffff,emissiveMap:tex,emissiveIntensity:0,roughness:.12,metalness:0,envMapIntensity:2.2,toneMapped:false});
+P.add(mesh(sg,scr,0,-.0324,D-.03-.07-sh_/2,false));
+const cam=new THREE.CircleGeometry(.014,12);cam.rotateX(Math.PI/2);P.add(mesh(cam,new THREE.MeshStandardMaterial({color:0x1a2030,roughness:.1,metalness:.5}),0,-.0326,D-.03-.035,false));
+const lo=new THREE.CircleGeometry(.13,40);lo.rotateX(-Math.PI/2);
+P.add(mesh(lo,new THREE.MeshStandardMaterial({color:0xd8d8dc,metalness:1,roughness:.08,envMapIntensity:2}),0,-.03+lidH+.0008,zc,false));
+/* screen light spilling on keys + deck */
+const glow=new THREE.SpotLight(0xdde3ee,0,9,.95,.9,1.4);glow.position.set(0,-.06,1.1);const gt=new THREE.Object3D();gt.position.set(0,FY+.08,-.15);L.add(gt);glow.target=gt;P.add(glow);
+
+/* ---------- analytics dashboard drawn to the screen ---------- */
+const F='Manrope,Helvetica Neue,Arial,sans-serif',INK='#f2f0eb',DIM='#8b8882',RED='#c4160f',AMB='#d19a3f',TEAL='#6d8c93';
+const rr=(x,y,w,h,r)=>{g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath()};
+const card=(x,y,w,h,t)=>{rr(x,y,w,h,12);g.fillStyle='#13141a';g.fill();g.strokeStyle='rgba(255,255,255,.07)';g.lineWidth=1;g.stroke();g.fillStyle=DIM;g.font='500 12px '+F;g.textAlign='left';g.textBaseline='top';g.fillText(t.toUpperCase(),x+18,y+16)};
+const rev=[42,46,44,52,58,55,63,69,66,74,81,88],tgt=[45,47,50,53,56,59,62,65,68,72,76,80],MO='J F M A M J J A S O N D'.split(' ');
+const pts=(a,x0,x1,y0,y1,lo,hi,k)=>{const n=a.length-1,m=k*n,o=[];for(let i=0;i<=n;i++){if(i<=m)o.push([x0+(x1-x0)*i/n,y1-(y1-y0)*(a[i]-lo)/(hi-lo)]);else{const f=m-(i-1);if(f>0){const v=a[i-1]+(a[i]-a[i-1])*f;o.push([x0+(x1-x0)*m/n,y1-(y1-y0)*(v-lo)/(hi-lo)])}break}}return o};
+const path=o=>{g.beginPath();o.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]))};
+const TB=[['Analytics Suite','North America','12,480','$1.42M','+14.2'],['Cloud Platform','Europe','9,215','$1.08M','+9.6'],['Data Connectors','APAC','7,630','$0.74M','+18.1'],['Support Plus','LATAM','5,102','$0.51M','−3.4'],['Training','MEA','3,388','$0.27M','+2.2']];
+const RG=[['North America',92],['Europe',71],['APAC',58],['LATAM',34],['MEA',21]];
+function draw(k){
+ g.fillStyle='#0b0c0e';g.fillRect(0,0,SW,SH);g.fillStyle='#0f1013';g.fillRect(0,0,72,SH);g.fillStyle='rgba(255,255,255,.06)';g.fillRect(72,0,1,SH);
+ rr(22,26,28,28,14);g.fillStyle=INK;g.fill();
+ for(let i=0;i<5;i++){rr(22,86+i*56,28,28,7);g.fillStyle=i==1?RED:'rgba(242,240,235,.14)';g.fill()}
+ g.textAlign='left';g.textBaseline='top';g.fillStyle=INK;g.font='700 24px '+F;g.fillText('Sales Performance',100,26);
+ g.fillStyle=DIM;g.font='400 13px '+F;g.fillText('FY 2026  ·  All regions  ·  Updated just now',100,58);
+ ['Overview','Revenue','Regions','Customers'].forEach((t,i)=>{const x=780+i*92;g.font='500 13px '+F;g.fillStyle=i?DIM:INK;g.fillText(t,x,36);if(!i){g.fillStyle=RED;g.fillRect(x,58,52,2)}});
+ rr(1140,28,120,30,15);g.strokeStyle='rgba(255,255,255,.12)';g.stroke();g.fillStyle=INK;g.font='500 12px '+F;g.fillText('Jan – Dec 2026',1158,36);
+ /* KPIs */
+ [['Revenue',4.82,'$','M',12.4],['Orders',38.4,'','K',8.1],['Avg. order',126,'$','',-2.3],['Conversion',3.9,'','%',.6]].forEach(([l,v,p,s,d],i)=>{
+  const x=100+i*294;card(x,98,278,112,l);g.fillStyle=INK;g.font='700 36px '+F;g.fillText(p+(v*k).toFixed(v<10?2:v<100?1:0)+s,x+18,124);
+  g.font='600 13px '+F;g.fillStyle=d>0?'#7fb894':'#d0574e';g.fillText((d>0?'▲ ':'▼ ')+Math.abs(d)+'%  vs last year',x+18,178);
+  const sp=pts(rev.map((a,j)=>a+Math.sin(j*(i+2))*6*(i+1)/2),x+170,x+260,140,186,30,100,k);path(sp);g.strokeStyle=i==2?'#d0574e':TEAL;g.lineWidth=2;g.stroke()});
+ /* revenue vs target */
+ card(100,226,640,300,'Revenue vs target ($K)');
+ [[INK,'Revenue',500],[AMB,'Target',580]].forEach(([c,t,dx])=>{g.fillStyle=c;g.fillRect(100+dx,244,10,3);g.fillStyle=DIM;g.font='500 12px '+F;g.fillText(t,100+dx+16,238)});
+ const X0=160,X1=712,Y0=290,Y1=486;g.font='400 11px '+F;
+ for(let i=0;i<5;i++){const y=Y1-(Y1-Y0)*i/4;g.fillStyle='rgba(255,255,255,.06)';g.fillRect(X0,y,X1-X0,1);g.fillStyle=DIM;g.textAlign='right';g.fillText(30+i*17,X0-10,y-6)}
+ g.textAlign='center';MO.forEach((m,i)=>{g.fillStyle=DIM;g.fillText(m,X0+(X1-X0)*i/11,Y1+12)});
+ const ta=pts(tgt,X0,X1,Y0,Y1,30,98,k);g.setLineDash([6,5]);path(ta);g.strokeStyle=AMB;g.lineWidth=1.6;g.stroke();g.setLineDash([]);
+ const ra=pts(rev,X0,X1,Y0,Y1,30,98,k);if(ra.length>1){path(ra);const l=ra[ra.length-1];g.lineTo(l[0],Y1);g.lineTo(ra[0][0],Y1);const gr=g.createLinearGradient(0,Y0,0,Y1);gr.addColorStop(0,'rgba(196,22,15,.35)');gr.addColorStop(1,'rgba(196,22,15,0)');g.fillStyle=gr;g.fill();
+  path(ra);g.strokeStyle=INK;g.lineWidth=2.4;g.stroke();g.beginPath();g.arc(l[0],l[1],5,0,7);g.fillStyle=RED;g.fill();g.strokeStyle='#0b0c0e';g.lineWidth=2;g.stroke()}
+ /* donut */
+ card(756,226,504,300,'Revenue by category');const cx=890,cy=388,seg=[[38,INK,'Software'],[27,RED,'Services'],[19,AMB,'Hardware'],[16,TEAL,'Support']];let a=-Math.PI/2;
+ seg.forEach(([v,c])=>{const sw_=v/100*Math.PI*2*k;g.beginPath();g.arc(cx,cy,78,a,a+Math.max(0,sw_-.03));g.strokeStyle=c;g.lineWidth=24;g.stroke();a+=v/100*Math.PI*2*k});
+ g.textAlign='center';g.fillStyle=INK;g.font='700 24px '+F;g.fillText('$'+(4.82*k).toFixed(2)+'M',cx,cy-16);g.fillStyle=DIM;g.font='400 12px '+F;g.fillText('total',cx,cy+12);
+ seg.forEach(([v,c,n],i)=>{const y=330+i*38;g.fillStyle=c;g.fillRect(1020,y+4,10,10);g.textAlign='left';g.fillStyle=INK;g.font='500 14px '+F;g.fillText(n,1042,y);g.textAlign='right';g.fillStyle=DIM;g.fillText(Math.round(v*k)+'%',1236,y)});
+ /* table */
+ card(100,542,640,238,'Top products');const cxs=[118,290,470,586,722],hd=['Product','Region','Units','Revenue','Δ YoY'];
+ hd.forEach((h,i)=>{g.textAlign=i>1?'right':'left';g.fillStyle=DIM;g.font='500 11px '+F;g.fillText(h,cxs[i],572)});
+ TB.forEach((r,j)=>{const y=598+j*34;g.globalAlpha=cl(k*6-j);g.fillStyle='rgba(255,255,255,.05)';g.fillRect(118,y-8,604,1);
+  r.forEach((c,i)=>{g.textAlign=i>1?'right':'left';g.font=(i==0?'600 ':'400 ')+'14px '+F;g.fillStyle=i==4?(c[0]=='−'?'#d0574e':'#7fb894'):i==0?INK:'#cfcac2';g.fillText(c+(i==4?'%':''),cxs[i],y)});g.globalAlpha=1});
+ /* regions */
+ card(756,542,504,238,'Sales by region');
+ RG.forEach(([n,v],i)=>{const y=580+i*36,w=Math.max(0,cl(k*1.2-i*.1))*v/92*260;g.textAlign='left';g.fillStyle='#cfcac2';g.font='400 13px '+F;g.fillText(n,776,y);rr(890,y+1,280,12,6);g.fillStyle='rgba(255,255,255,.06)';g.fill();if(w>1){rr(890,y+1,w,12,6);g.fillStyle=i?'#d9d4c9':RED;g.fill()}g.textAlign='right';g.fillStyle=INK;g.fillText(Math.round(v*k)+'K',1242,y)});
+}
+draw(0);tex.needsUpdate=true;if(document.fonts)document.fonts.ready.then(()=>{draw(dk);tex.needsUpdate=true});
+
+/* ---------- scroll-driven mechanical animation ---------- */
+const AN=[[0,0],[.25,30],[.5,60],[.75,90],[1,108]];
+const angAt=p=>{for(let i=1;i<5;i++)if(p<=AN[i][0]){const a=AN[i-1],b=AN[i];return a[1]+(b[1]-a[1])*(p-a[0])/(b[0]-a[0])}return 108};
+let sp=0,dk=0,ldk=-1,mx=0,my=0,cmx=0,cmy=0,lt=performance.now();
+addEventListener('pointermove',e=>{mx=e.clientX/innerWidth-.5;my=e.clientY/innerHeight-.5},{passive:true});
+addEventListener('resize',()=>{C.aspect=innerWidth/innerHeight;C.updateProjectionMatrix();R.setSize(innerWidth,innerHeight,false)});
+function tick(now){
+ requestAnimationFrame(tick);
+ const y=scrollY,vh=innerHeight,dt=Math.min(.05,(now-lt)/1000);lt=now;
+ if(document.hidden)return;
+ const pg=cl(y/Math.max(1,document.body.scrollHeight-vh));   /* whole-page progress */
+ sp+=(cl(y/(vh*1.2))-sp)*.2;                       /* scroll progress (light inertia) */
+ const a=angAt(sp);P.rotation.x=-a*Math.PI/180;    /* lid rotates about the hinge; base never moves */
+ const on=sst(78,90,a);scr.emissiveIntensity=on;glow.intensity=on*2.4;legM.color.setScalar(.33+.67*on);
+ if(on>.98)dk=Math.min(1,dk+dt*.6);else if(on<.05)dk=0;
+ if(dk!==ldk){const e=1-Math.pow(1-dk,3);draw(e);tex.needsUpdate=true;ldk=dk}
+ cmx+=(mx-cmx)*.05;cmy+=(my-cmy)*.05;const px=rm?0:cmx,py=rm?0:cmy;
+ const z0=mob?21:10.4,z1=mob?17:8.2;                /* gentle dolly-in + perspective shift */
+ C.position.set(-.7+sp*1.1+px*.35+Math.sin(pg*6.28)*.6,3.9-sp*1.1-py*.2+Math.sin(pg*9)*.15,z0+(z1-z0)*sp);
+ C.lookAt(0,(mob?-1.1:-.3)+sp*(mob?.9:1),0);
+ L.rotation.y=-.32+sp*.24+Math.sin(pg*6.28)*.12+Math.sin(now/2500)*.02;
+ R.render(S,C);
+}
+requestAnimationFrame(tick);
+})();
+</script>
+
 </body>
 </html>
